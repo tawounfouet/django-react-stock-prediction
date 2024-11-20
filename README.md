@@ -1,4 +1,5 @@
 
+### BackEnd Setup
 
 ```sh
 python3 -m venv _venv
@@ -33,3 +34,13 @@ python manage.py createsuperuser
 #Email address: awf@example.com
 #Password: awf
 #Password (again):awf
+
+python manage.py runserver
+```
+
+### FrontEnd Setup
+
+```sh
+npm i
+
+npm run dev
