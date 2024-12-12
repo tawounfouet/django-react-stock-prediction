@@ -9,12 +9,12 @@ django-admin startproject project .
 ```
 
 
-### Auth app
+### Installation of authentication & api APPS
 
 
 ```sh
 python manage.py startapp authentication
-
+python manage.py startapp api
 
 # settings.py
 # Point to Custom User Model
