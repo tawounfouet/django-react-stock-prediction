@@ -1,20 +1,79 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from .serializers import StockPredictionSerializer
-from rest_framework import status
-from rest_framework.response import Response
+import os
+import pickle
+import joblib
+import json
+
+
 import yfinance as yf
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
-import os
-from django.conf import settings
-from .utils import save_plot
-from sklearn.preprocessing import MinMaxScaler
-from keras.models import load_model
-from sklearn.metrics import mean_squared_error, r2_score
 
+
+
+#from sklearn.externals import joblib
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error, r2_score
+from keras.models import load_model
+
+
+from django.conf import settings
+from django.shortcuts import render
+from django.http import JsonResponse
+
+from rest_framework import viewsets
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+
+
+from .serializers import StockPredictionSerializer
+
+from .models import Approvals
+from .serializers import approvalsSerializers
+from .forms import MyForm
+
+
+from .utils import save_plot
+
+class ApprovalsView(viewsets.ModelViewSet):
+	queryset = Approvals.objects.all()
+	serializer_class = approvalsSerializers
+
+def myform(request):
+    if request.method == "POST":
+        form = MyForm(request.POST)
+        if form.is_valid():
+            myform = form.save(commit=False)
+            #myform.save()
+    
+    else:
+        form = MyForm()
+    # return render(request, "myform/form.html", {'form': form})
+
+    
+
+
+@api_view(["POST"])
+def approvereject(request):
+	try:
+		mdl=joblib.load("/workspaces/django-react-stock-prediction/backend-drf/api/loan_model.pkl")
+		#mydata=pd.read_excel('/Users/sahityasehgal/Documents/Coding/bankloan/test.xlsx')
+		mydata=request.data
+		unit=np.array(list(mydata.values()))
+		unit=unit.reshape(1,-1)
+		scalers=joblib.load("/workspaces/django-react-stock-prediction/backend-drf/api/scalers.pkl")
+		X=scalers.transform(unit)
+		y_pred=mdl .predict(X)
+		y_pred=(y_pred>0.58)
+		newdf=pd.DataFrame(y_pred, columns=['Status'])
+		newdf=newdf.replace({True:'Approved', False:'Rejected'})
+		return JsonResponse('Your Status is {}'.format(newdf), safe=False)
+	except ValueError as e:
+		return Response(e.args[0], status.HTTP_400_BAD_REQUEST)
 
 
 class StockPredictionAPIView(APIView):
