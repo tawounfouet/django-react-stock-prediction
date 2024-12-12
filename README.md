@@ -38,6 +38,12 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+### New Backend 
+```sh
+mkdir backend
+django-admin startproject project .
+
+
 ### FrontEnd Setup
 
 ```sh
