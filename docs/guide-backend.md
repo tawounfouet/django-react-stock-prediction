@@ -26,3 +26,14 @@ python manage.py migrate
 python manage.py createsuperuser
 
 python manage.py runserver
+
+```
+
+
+### DRF Simple-JWF
+
+```sh
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html#installation
+
+pip install djangorestframework-simplejwt
+pip install djangorestframework-simplejwt[crypto]
