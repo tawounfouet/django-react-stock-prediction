@@ -1,6 +1,13 @@
 
 ##  Backend 
 ```sh
+python3.10 -m venv _venv
+
+source _venv/bin/activate
+
+pip install -r requirements_without_ml.txt
+pip install -r requirements.txt
+
 mkdir backend
 django-admin startproject project .
 
